@@ -152,7 +152,11 @@ def admin_dashboard():
     cursor.execute("SELECT username FROM users")
     users = cursor.fetchall()
 
-    cursor.execute("SELECT username, word, searched_at FROM history ORDER BY id DESC")
+ cursor.execute("""
+    SELECT username, word, searched_at
+    FROM history
+    ORDER BY id DESC
+""")
     history = cursor.fetchall()
 
     conn.close()
