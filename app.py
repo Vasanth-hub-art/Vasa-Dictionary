@@ -46,9 +46,11 @@ def init_db():
 
 
 # ✅ RUN TABLE CREATION ON START
-@app.before_first_request
-def startup():
-    init_db()
+@app.before_request
+def ensure_db():
+    if not hasattr(app, "db_initialized"):
+        init_db()
+        app.db_initialized = True
 
 
 # ---------- HOME ----------
