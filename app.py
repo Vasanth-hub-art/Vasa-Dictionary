@@ -7,14 +7,18 @@ app.secret_key = os.environ.get("SECRET_KEY", "secret123")
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+
 # ---------- DB CONNECTION ----------
 def get_db():
+    if not DATABASE_URL:
+        raise Exception("DATABASE_URL not set in Render")
+
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     return conn, cursor
 
 
-# ---------- INIT DATABASE ----------
+# ---------- INIT DATABASE (MANUAL USE ONLY) ----------
 def init_db():
     conn, cursor = get_db()
 
@@ -45,12 +49,14 @@ def init_db():
     conn.close()
 
 
-# ✅ RUN TABLE CREATION ON START
-@app.before_request
-def ensure_db():
-    if not hasattr(app, "db_initialized"):
+# ---------- RUN THIS ONCE IN BROWSER ----------
+@app.route("/init")
+def initialize():
+    try:
         init_db()
-        app.db_initialized = True
+        return "Database initialized ✅"
+    except Exception as e:
+        return f"Error: {e}"
 
 
 # ---------- HOME ----------
@@ -174,11 +180,14 @@ def admin_dashboard():
         word = request.form["word"].lower()
         meaning = request.form["meaning"]
 
-        cursor.execute(
-            "INSERT INTO dictionary (word, meaning) VALUES (%s, %s)",
-            (word, meaning)
-        )
-        conn.commit()
+        try:
+            cursor.execute(
+                "INSERT INTO dictionary (word, meaning) VALUES (%s, %s)",
+                (word, meaning)
+            )
+            conn.commit()
+        except:
+            pass
 
     cursor.execute("SELECT COUNT(*) FROM dictionary")
     total_words = cursor.fetchone()[0]
