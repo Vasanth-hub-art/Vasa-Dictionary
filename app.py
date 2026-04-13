@@ -6,6 +6,40 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "secret123")
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
+def get_db():
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    return conn, cursor
+
+
+def init_db():
+    conn, cursor = get_db()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        username TEXT PRIMARY KEY,
+        password TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS dictionary (
+        word TEXT PRIMARY KEY,
+        meaning TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS history (
+        id SERIAL PRIMARY KEY,
+        username TEXT,
+        word TEXT,
+        searched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 
 # ---------- DB CONNECTION ----------
 def get_db():
