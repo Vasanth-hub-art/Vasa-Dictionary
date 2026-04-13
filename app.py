@@ -35,11 +35,12 @@ def register():
                 (username, password)
             )
             conn.commit()
-            conn.close()
-            return redirect("/user_login")
         except:
+            return render_template("register.html", error="User exists ❌")
+        finally:
             conn.close()
-            return render_template("register.html", error="User already exists ❌")
+
+        return redirect("/user_login")
 
     return render_template("register.html")
 
@@ -64,7 +65,7 @@ def user_login():
             session["user"] = username
             return redirect("/user_dashboard")
 
-        return render_template("user_login.html", error="Invalid Credentials ❌")
+        return render_template("user_login.html", error="Invalid ❌")
 
     return render_template("user_login.html")
 
@@ -81,13 +82,13 @@ def user_dashboard():
     if request.method == "POST":
         word = request.form["word"].lower()
 
-        cursor.execute("SELECT meaning FROM dictionary WHERE word=%s", (word,))
+        cursor.execute(
+            "SELECT meaning FROM dictionary WHERE word=%s",
+            (word,)
+        )
         result = cursor.fetchone()
 
-        if result:
-            meaning = result[0]
-        else:
-            meaning = "Word not found ❌"
+        meaning = result[0] if result else "Not found ❌"
 
         cursor.execute(
             "INSERT INTO history (username, word) VALUES (%s, %s)",
@@ -114,7 +115,7 @@ def admin_login():
             session["admin"] = True
             return redirect("/admin_dashboard")
 
-        return render_template("admin_login.html", error="Access Denied ❌")
+        return render_template("admin_login.html", error="Denied ❌")
 
     return render_template("admin_login.html")
 
@@ -153,9 +154,9 @@ def admin_dashboard():
     users = cursor.fetchall()
 
     cursor.execute("""
-    SELECT username, word, searched_at
-    FROM history
-    ORDER BY id DESC
+        SELECT username, word, searched_at
+        FROM history
+        ORDER BY id DESC
     """)
     history = cursor.fetchall()
 
@@ -195,15 +196,14 @@ def edit_word(word):
     conn, cursor = get_db()
 
     if request.method == "POST":
-        new_meaning = request.form["meaning"]
+        meaning = request.form["meaning"]
 
         cursor.execute(
             "UPDATE dictionary SET meaning=%s WHERE word=%s",
-            (new_meaning, word)
+            (meaning, word)
         )
         conn.commit()
         conn.close()
-
         return redirect("/admin_dashboard")
 
     cursor.execute("SELECT * FROM dictionary WHERE word=%s", (word,))
