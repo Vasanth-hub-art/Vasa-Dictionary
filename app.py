@@ -10,15 +10,12 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 # ---------- DB CONNECTION ----------
 def get_db():
-    if not DATABASE_URL:
-        raise Exception("DATABASE_URL not set in Render")
-
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     return conn, cursor
 
 
-# ---------- INIT DATABASE (MANUAL USE ONLY) ----------
+# ---------- INIT DATABASE ----------
 def init_db():
     conn, cursor = get_db()
 
@@ -49,14 +46,8 @@ def init_db():
     conn.close()
 
 
-# ---------- RUN THIS ONCE IN BROWSER ----------
-@app.route("/init")
-def initialize():
-    try:
-        init_db()
-        return "Database initialized ✅"
-    except Exception as e:
-        return f"Error: {e}"
+# ✅ Run once when server starts
+init_db()
 
 
 # ---------- HOME ----------
@@ -66,27 +57,26 @@ def home():
 
 
 # ---------- REGISTER ----------
-
-         @app.route("/register", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn, cursor = get_db()
+
         try:
-            username = request.form["username"]
-            password = request.form["password"]
-
-            conn, cursor = get_db()
-
             cursor.execute(
                 "INSERT INTO users (username, password) VALUES (%s, %s)",
                 (username, password)
             )
             conn.commit()
             conn.close()
-
-            return "REGISTER SUCCESS ✅"
+            return redirect("/user_login")
 
         except Exception as e:
-            return f"REGISTER ERROR: {e}"
+            conn.close()
+            return render_template("register.html", error="User already exists ❌")
 
     return render_template("register.html")
 
