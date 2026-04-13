@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #121212;
+    color: white;
+    text-align: center;
+    padding-top: 50px;
+}
+
+.container {
+    background: #1e1e1e;
+    width: 400px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    background: #03DAC6;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #00bfa5;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 10px;
+    background: #2c2c2c;
+    border-radius: 5px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: #2c2c2c;
+    margin: 5px;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.logout {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    text-decoration: none;
+}
+</style>
+
+</head>
+
+<body>
+
+<a href="/logout" class="logout">Logout</a>
+
+<h1>🔍 Vasa Dictionary</h1>
+
+<div class="container">
+
+<form method="POST">
+    <input type="text" name="word" placeholder="Enter word..." required>
+    <br>
+    <button type="submit">Search</button>
+</form>
+
+{% if meaning %}
+<div class="result">
+    <h3>Meaning:</h3>
+    <p>{{ meaning }}</p>
+</div>
+{% endif %}
+
+<h3>Recent Searches</h3>
+
+{% if history %}
+<ul>
+{% for item in history %}
+    <li>{{ item[0] }} <br><small>{{ item[1] }}</small></li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No history yet</p>
+{% endif %}
+
+</div>
+
+</body>
+</html>

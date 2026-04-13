@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Vasa Dictionary </title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    text-align: center;
+}
+
+.container {
+    margin-top: 120px;
+}
+
+h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #ccc;
+    font-size: 18px;
+}
+
+.buttons {
+    margin-top: 40px;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.user-btn {
+    background: #03DAC6;
+    color: black;
+}
+
+.admin-btn {
+    background: #ff4b2b;
+    color: white;
+}
+
+.register-btn {
+    background: #6200ea;
+    color: white;
+}
+
+button:hover {
+    transform: scale(1.08);
+}
+
+.footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    color: #aaa;
+    font-size: 14px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📖 Vasa Dictionary </h1>
+    <p>Search words, learn meanings, and manage your own dictionary</p>
+
+    <div class="buttons">
+        <a href="/user_login">
+            <button class="user-btn">User Login</button>
+        </a>
+
+        <a href="/register">
+            <button class="register-btn">Register</button>
+        </a>
+
+        <a href="/admin_login">
+            <button class="admin-btn">Admin Login</button>
+        </a>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>© 2026 Dictionary App | Built with Flask</p>
+</div>
+
+</body>
+</html>

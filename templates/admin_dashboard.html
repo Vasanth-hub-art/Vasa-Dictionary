@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #121212;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    margin: auto;
+    width: 90%;
+}
+
+input {
+    padding: 10px;
+    margin: 5px;
+    width: 40%;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    padding: 10px;
+    background: #03DAC6;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #00bfa5;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: #2c2c2c;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #444;
+}
+
+th {
+    background: #333;
+}
+
+a {
+    color: red;
+    text-decoration: none;
+}
+
+.logout {
+    float: right;
+    color: white;
+}
+</style>
+
+</head>
+
+<body>
+
+<a href="/logout" class="logout">Logout</a>
+
+<h1>👨‍💼 Vasa Dictionary - Admin</h1>
+
+<div class="container">
+
+<!-- STATS -->
+<div class="stats">
+    <div class="card">
+        <h3>Total Words</h3>
+        <p>{{ total_words }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Users</h3>
+        <p>{{ total_users }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Searches</h3>
+        <p>{{ total_searches }}</p>
+    </div>
+</div>
+
+<!-- ADD WORD -->
+<h3>Add New Word</h3>
+
+<form method="POST">
+    <input type="text" name="word" placeholder="Word" required>
+    <input type="text" name="meaning" placeholder="Meaning" required>
+    <button type="submit">Add</button>
+</form>
+
+<!-- DICTIONARY TABLE -->
+<h3>📚 Dictionary</h3>
+
+<table>
+<tr>
+<th>Word</th>
+<th>Meaning</th>
+<th>Actions</th>
+</tr>
+
+{% for w in words %}
+<tr>
+<td>{{ w[0] }}</td>
+<td>{{ w[1] }}</td>
+<td>
+<a href="/edit/{{ w[0] }}">Edit</a> |
+<a href="/delete/{{ w[0] }}">Delete</a>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<!-- USERS -->
+<h3>👤 Users</h3>
+<ul>
+{% for u in users %}
+<li>{{ u[0] }}</li>
+{% endfor %}
+</ul>
+
+<!-- HISTORY -->
+<h3>📜 Search History</h3>
+
+<table>
+<tr>
+<th>User</th>
+<th>Word</th>
+<th>Time</th>
+</tr>
+
+{% for h in history %}
+<tr>
+<td>{{ h[0] }}</td>
+<td>{{ h[1] }}</td>
+<td>{{ h[2] }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+</html>
