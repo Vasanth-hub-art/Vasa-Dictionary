@@ -92,19 +92,6 @@ li {
     <p>{{ meaning }}</p>
 </div>
 {% endif %}
-
-<h3>Recent Searches</h3>
-
-{% if history %}
-<ul>
-{% for item in history %}
-    <li>{{ item[0] }} <br><small>{{ item[1] }}</small></li>
-{% endfor %}
-</ul>
-{% else %}
-<p>No history yet</p>
-{% endif %}
-
 </div>
 
 </body>
