@@ -1,5 +1,31 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import os
+def init_db():
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+        username TEXT PRIMARY KEY,
+        password TEXT
+    )""")
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS dictionary (
+        word TEXT PRIMARY KEY,
+        meaning TEXT
+    )""")
+
+    cursor.execute("""CREATE TABLE IF NOT EXISTS history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        word TEXT,
+        searched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )""")
+
+    conn.commit()
+    conn.close()
+
+init_db()
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -228,7 +254,7 @@ def logout():
 
 
 # ---------- RUN ----------
-import os
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
