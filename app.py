@@ -46,7 +46,9 @@ def init_db():
 
 
 # ✅ RUN TABLE CREATION ON START
-init_db()
+@app.before_first_request
+def startup():
+    init_db()
 
 
 # ---------- HOME ----------
