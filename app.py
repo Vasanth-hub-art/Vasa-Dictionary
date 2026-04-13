@@ -6,12 +6,15 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "secret123")
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
+# ---------- DB CONNECTION ----------
 def get_db():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     return conn, cursor
 
 
+# ---------- INIT DATABASE ----------
 def init_db():
     conn, cursor = get_db()
 
@@ -41,11 +44,9 @@ def init_db():
     conn.commit()
     conn.close()
 
-# ---------- DB CONNECTION ----------
-def get_db():
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    return conn, cursor
+
+# ✅ RUN TABLE CREATION ON START
+init_db()
 
 
 # ---------- HOME ----------
@@ -69,12 +70,12 @@ def register():
                 (username, password)
             )
             conn.commit()
-        except:
-            return render_template("register.html", error="User exists ❌")
-        finally:
             conn.close()
+            return redirect("/user_login")
 
-        return redirect("/user_login")
+        except:
+            conn.close()
+            return render_template("register.html", error="User already exists ❌")
 
     return render_template("register.html")
 
@@ -99,7 +100,7 @@ def user_login():
             session["user"] = username
             return redirect("/user_dashboard")
 
-        return render_template("user_login.html", error="Invalid ❌")
+        return render_template("user_login.html", error="Invalid Credentials ❌")
 
     return render_template("user_login.html")
 
@@ -122,7 +123,7 @@ def user_dashboard():
         )
         result = cursor.fetchone()
 
-        meaning = result[0] if result else "Not found ❌"
+        meaning = result[0] if result else "Word not found ❌"
 
         cursor.execute(
             "INSERT INTO history (username, word) VALUES (%s, %s)",
@@ -130,12 +131,15 @@ def user_dashboard():
         )
         conn.commit()
 
-    cursor.execute(
-        "SELECT word, searched_at FROM history WHERE username=%s ORDER BY id DESC LIMIT 5",
-        (session["user"],)
-    )
-    history = cursor.fetchall()
+    cursor.execute("""
+        SELECT word, searched_at
+        FROM history
+        WHERE username=%s
+        ORDER BY id DESC
+        LIMIT 5
+    """, (session["user"],))
 
+    history = cursor.fetchall()
     conn.close()
 
     return render_template("user_dashboard.html", meaning=meaning, history=history)
@@ -149,7 +153,7 @@ def admin_login():
             session["admin"] = True
             return redirect("/admin_dashboard")
 
-        return render_template("admin_login.html", error="Denied ❌")
+        return render_template("admin_login.html", error="Access Denied ❌")
 
     return render_template("admin_login.html")
 
